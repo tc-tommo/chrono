@@ -81,3 +81,50 @@ export function mergeDateTimeComponent(
     dateTimeComponent.addTags(timeComponent.tags());
     return dateTimeComponent;
 }
+
+
+/**
+ * Merges a start and end result into a single result.
+ * @param start - The start result.
+ * @param end - The end result.
+ * @returns The merged result.
+ */
+export function mergeStartEnd(start: ParsingResult, end: ParsingResult): ParsingResult {
+    const result = start.clone();
+    result.end = end.start;
+    result.text = start.text + end.text;
+
+
+    // If the end doesnt have a certain component, but start does
+    // we need to apply the start date to the end
+    if (result.start.isCertain("day") && !result.end.isCertain("day")) {
+        result.end.assign("day", result.start.get("day"));
+    }
+    if (result.start.isCertain("month") && !result.end.isCertain("month")) {
+        result.end.assign("month", result.start.get("month"));
+    }
+    if (result.start.isCertain("year") && !result.end.isCertain("year")) {
+        result.end.assign("year", result.start.get("year"));
+    }
+    if (result.start.isCertain("timezoneOffset") && !result.end.isCertain("timezoneOffset")) {
+        result.end.assign("timezoneOffset", result.start.get("timezoneOffset"));
+    }
+    if (result.start.isCertain("meridiem") && !result.end.isCertain("meridiem")) {
+        result.end.assign("meridiem", result.start.get("meridiem"));
+    }
+    if (result.start.isCertain("hour") && !result.end.isCertain("hour")) {
+        result.end.assign("hour", result.start.get("hour"));
+    }
+
+    // If the end is before the start, we need to find the next satisfying date
+    // if (result.end.date().getTime() < result.start.date().getTime()) {
+    //     const nextDayJs = result.end.dayjs().add(1, "day");
+    //     if (result.end.isCertain("day")) {
+    //         assignSimilarDate(result.end, nextDayJs);
+    //     } else {
+    //         implySimilarDate(result.end, nextDayJs);
+    //     }
+    // }
+
+    return result;
+}   

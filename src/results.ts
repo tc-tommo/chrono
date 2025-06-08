@@ -330,4 +330,13 @@ export class ParsingResult implements ParsedResult {
         const tags = Array.from(this.tags()).sort();
         return `[ParsingResult {index: ${this.index}, text: '${this.text}', tags: ${JSON.stringify(tags)} ...}]`;
     }
+
+    toIcs(summary: string): string {
+        const ics = `BEGIN:VEVENT
+        DTSTART:${this.start.date().toISOString()}
+        DTEND:${this.end?.date().toISOString() ?? this.start.assign("day", this.start.get("day") + 1).date().toISOString()}
+        SUMMARY:${summary}
+        END:VEVENT`;
+        return ics;
+    }
 }

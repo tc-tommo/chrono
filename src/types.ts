@@ -85,6 +85,11 @@ export interface ParsedResult {
      * @return debugging tags combined of the `result.start` and `result.end`.
      */
     tags(): Set<string>;
+
+    /**
+     * @return a ics string
+     */
+    toIcs(summary: string): string;
 }
 
 /**
