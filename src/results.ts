@@ -332,11 +332,17 @@ export class ParsingResult implements ParsedResult {
     }
 
     toIcs(summary: string): string {
-        const ics = `BEGIN:VEVENT
-        DTSTART:${this.start.date().toISOString()}
-        DTEND:${this.end?.date().toISOString() ?? this.start.assign("day", this.start.get("day") + 1).date().toISOString()}
-        SUMMARY:${summary}
-        END:VEVENT`;
+        const ics = `\
+BEGIN:VEVENT 
+DTSTART:${iCalDateTime(this.start.date())}
+DTEND:${iCalDateTime(this.end?.date() ?? this.start.assign("day", this.start.get("day") + 1).date())}
+SUMMARY:${summary.trim().replace(/\n/g, ' ')}
+END:VEVENT`;
         return ics;
     }
+}
+
+
+const iCalDateTime = (date: Date) => {
+    return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
 }
